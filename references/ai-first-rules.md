@@ -120,14 +120,36 @@ ai-first: true
 ```yaml
 date: YYYY-MM-DD
 type: task
-status: in-progress           # in-progress | done | waiting | cancelled
-priority: 🔴 | 🟡 | 🟢
-due: YYYY-MM-DD
+status: todo                  # todo | in_progress | blocked | completed
+priority: low | medium | high
+start_date: YYYY-MM-DD        # optional, defaults to date
+due_date: YYYY-MM-DD          # optional
 tags: [task, ...]
 related-projects: ["[[Projects/...]]", ...]
 related-people: ["[[People/...]]", ...]
 ai-first: true
+
+# ── life-os sync (populated by /obsidian-lifeos-sync) ──
+# All optional. The bridge mints lifeos-sync-id on first push; everything
+# else is round-tripped from life-os and should be left untouched by humans
+# unless they know what they are doing.
+lifeos-area: professional     # god | self | family | service | professional | secular
+lifeos-goal: 5                # connected goal number 1-8 (optional)
+lifeos-sync-id: <uuid>        # stable id minted by the bridge
+lifeos-id: 123                # numeric id assigned by life-os after first POST
+lifeos-synced: 2026-05-25T15:00:00Z   # last successful sync timestamp (UTC)
+google-event-id: <id>         # populated when /obsidian-schedule has agendado
 ```
+
+**status / priority values** match what life-os accepts on `AreaTask`. The
+older emoji priorities (🔴/🟡/🟢) translate as 🔴→high, 🟡→medium, 🟢→low —
+the bridge does NOT auto-translate; use the literal strings.
+
+**Field ownership for sync:** the vault owns DEFINITION fields (text,
+priority, dates, area, goal, existence). life-os owns EXECUTION fields
+(status / completed). When both sides change the same field group since
+the last sync, the vault wins for definition, life-os wins for execution,
+and a `## Sync conflict` block is appended to the note for human review.
 
 ### `type: decision`
 Decisions usually live INSIDE project notes' Key Decisions sections. When a standalone decision note is needed:
