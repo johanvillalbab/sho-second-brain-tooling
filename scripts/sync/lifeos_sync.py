@@ -138,14 +138,25 @@ def _load_note(path: Path) -> Optional[VaultNote]:
     return VaultNote(path=path, frontmatter=fm, body=body, sync_id=sync_id)
 
 
-def iter_task_notes(vault: Path) -> Iterable[VaultNote]:
-    skip_dirs = {".git", ".obsidian", ".smart-env", "node_modules", ".trash"}
+_SKIP_DIRS = {".git", ".obsidian", ".smart-env", "node_modules", ".trash"}
+
+
+def iter_notes_of_type(vault: Path, type_: str) -> Iterable[VaultNote]:
+    """Generic frontmatter-type filter. Used for tasks, goals, dates, etc."""
+    type_ = type_.strip().lower()
     for md in vault.rglob("*.md"):
-        if any(part in skip_dirs for part in md.relative_to(vault).parts):
+        if any(part in _SKIP_DIRS for part in md.relative_to(vault).parts):
             continue
         note = _load_note(md)
-        if note and note.is_task:
+        if note is None:
+            continue
+        if str(note.frontmatter.get(KEY_TYPE, "")).strip().lower() == type_:
             yield note
+
+
+def iter_task_notes(vault: Path) -> Iterable[VaultNote]:
+    """Back-compat: tasks-only filter (kept so external callers don't break)."""
+    return iter_notes_of_type(vault, "task")
 
 
 # ── mapping vault note <-> life-os payload ──────────────────────────────────
@@ -410,49 +421,277 @@ def apply_plan(
     return applied
 
 
+# ── goals sync (vault -> life-os, push only) ────────────────────────────────
+#
+# Goals are 8 fixed entries in life-os (seeded by main.py DEFAULT_GOALS).
+# The bridge does NOT create goals (numbers 1-8 are reserved). It pushes:
+#   - q1-q4 status updates when the vault note changes them
+#   - next_steps additions / edits / deletions
+# Pull-back is not yet implemented (Fase 3 minimum); life-os UI changes to
+# goal status will be picked up in Fase 4 once the nightly routine logs them.
+
+GOAL_STATUS_VALUES = {"on_track", "at_risk", "off_track", "completed"}
+KEY_GOAL_NUMBER = "number"
+KEY_GOAL_Q_STATUS = "quarter_status"   # frontmatter dict {1: "on_track", 2: ...}
+KEY_GOAL_NEXT_STEPS = "next_steps"     # frontmatter list of strings (or list of dicts with lifeos-id)
+
+
+def sync_goals(client: LifeOSClient, vault: Path, dry_run: bool) -> dict:
+    """Push vault `type: goal` notes into life-os goals.
+
+    Schema for a goal note (see references/ai-first-rules.md):
+        type: goal
+        number: 5             # 1-8
+        quarter_status:
+          1: on_track
+          2: on_track
+        next_steps:
+          - "Define positioning statement"
+          - "Land first corporate client"
+        lifeos-synced: ...
+
+    Returns a summary dict: {"goal_status_updates": N, "next_steps_added": N, "errors": N}
+    """
+    notes = list(iter_notes_of_type(vault, "goal"))
+    logger.info("Found %d goal notes in %s", len(notes), vault)
+    out = {"goal_status_updates": 0, "next_steps_added": 0, "errors": 0}
+
+    if not notes:
+        return out
+
+    try:
+        lifeos_goals = client.goals_list().get("goals", [])
+    except LifeOSError as exc:
+        logger.error("Cannot reach life-os /goals: %s", exc)
+        out["errors"] += 1
+        return out
+
+    by_number = {g["number"]: g for g in lifeos_goals}
+
+    for note in notes:
+        number = note.frontmatter.get(KEY_GOAL_NUMBER)
+        try:
+            number = int(number) if number is not None else None
+        except (TypeError, ValueError):
+            number = None
+        if number is None or number not in by_number:
+            logger.warning("Skipping %s: missing or invalid `number` (must be 1-8)", note.path)
+            continue
+
+        existing = by_number[number]
+
+        # Quarter status updates
+        quarter_status = note.frontmatter.get(KEY_GOAL_Q_STATUS) or {}
+        if isinstance(quarter_status, dict):
+            for q_key, q_status in quarter_status.items():
+                try:
+                    q = int(q_key)
+                except (TypeError, ValueError):
+                    continue
+                if q not in (1, 2, 3, 4):
+                    continue
+                status = str(q_status).strip().lower()
+                if status not in GOAL_STATUS_VALUES:
+                    logger.warning("Unknown goal status %r on goal %d Q%d", q_status, number, q)
+                    continue
+                if existing.get(f"q{q}_status") == status:
+                    continue
+                if dry_run:
+                    logger.info("[dry-run] PUT /goals/%d/status quarter=%d status=%s", number, q, status)
+                    out["goal_status_updates"] += 1
+                    continue
+                try:
+                    client.goals_update_status(number, q, status)
+                    out["goal_status_updates"] += 1
+                except LifeOSError as exc:
+                    logger.error("Goal %d Q%d status update failed: %s", number, q, exc)
+                    out["errors"] += 1
+
+        # Next-steps: simple additive sync — for any step text in the vault
+        # not yet in life-os, POST it. Removing/editing existing steps is
+        # deferred (would need a stable id correlation, currently next steps
+        # are just strings on the vault side).
+        steps = note.frontmatter.get(KEY_GOAL_NEXT_STEPS) or []
+        if isinstance(steps, list):
+            existing_texts = {ns.get("text", "").strip() for ns in (existing.get("next_steps") or [])}
+            for step in steps:
+                text = (step.strip() if isinstance(step, str) else str(step.get("text", "")).strip())
+                if not text or text in existing_texts:
+                    continue
+                if dry_run:
+                    logger.info("[dry-run] POST /goals/%d/nextsteps text=%r", number, text)
+                    out["next_steps_added"] += 1
+                    continue
+                try:
+                    client.goals_add_next_step(number, text)
+                    out["next_steps_added"] += 1
+                except LifeOSError as exc:
+                    logger.error("Goal %d add next-step failed: %s", number, exc)
+                    out["errors"] += 1
+
+        if not dry_run:
+            note.frontmatter[KEY_LIFEOS_SYNCED] = _now_iso()
+            note.frontmatter.setdefault("ai-first", True)
+            note.path.write_text(_dump_frontmatter(note.frontmatter, note.body), encoding="utf-8")
+
+    return out
+
+
+# ── dates sync (vault -> life-os) ───────────────────────────────────────────
+
+
+def _date_to_create_payload(note: VaultNote) -> dict:
+    return {
+        "event": note.frontmatter.get("event") or note.path.stem,
+        "date": _coerce_date(note.frontmatter.get(KEY_DATE)) or _coerce_date(note.frontmatter.get("date")),
+        "note": (note.frontmatter.get("note") or "").strip() or None,
+        "area": _normalize_area(note.frontmatter.get("area") or note.frontmatter.get(KEY_AREA)),
+        "category": (note.frontmatter.get("category") or "other").strip().lower(),
+        "important": bool(note.frontmatter.get("important", False)),
+        "recurrence": (note.frontmatter.get("recurrence") or "yearly").strip().lower(),
+        "lifeos_sync_id": note.sync_id,
+    }
+
+
+def sync_dates(client: LifeOSClient, vault: Path, dry_run: bool) -> dict:
+    notes = list(iter_notes_of_type(vault, "important-date"))
+    logger.info("Found %d important-date notes in %s", len(notes), vault)
+    out = {"create": 0, "update": 0, "errors": 0}
+
+    if not notes:
+        return out
+
+    for note in notes:
+        if not note.sync_id:
+            note.sync_id = str(uuid.uuid4())
+            note.frontmatter[KEY_SYNC_ID] = note.sync_id
+
+        payload = _date_to_create_payload(note)
+        if not payload["date"]:
+            logger.warning("Skipping %s: no date frontmatter", note.path)
+            continue
+
+        try:
+            existing = client.dates_get_by_sync_id(note.sync_id)
+        except LifeOSError as exc:
+            logger.error("dates lookup failed for %s: %s", note.sync_id, exc)
+            out["errors"] += 1
+            continue
+
+        if existing is None:
+            if dry_run:
+                logger.info("[dry-run] POST /dates event=%r date=%s", payload["event"], payload["date"])
+                out["create"] += 1
+            else:
+                try:
+                    result = client.dates_create(payload)
+                    note.frontmatter[KEY_LIFEOS_ID] = result.get("id")
+                    note.frontmatter[KEY_LIFEOS_SYNCED] = _now_iso()
+                    note.frontmatter.setdefault("ai-first", True)
+                    note.path.write_text(_dump_frontmatter(note.frontmatter, note.body), encoding="utf-8")
+                    out["create"] += 1
+                except LifeOSError as exc:
+                    logger.error("date create failed for %s: %s", note.path, exc)
+                    out["errors"] += 1
+        else:
+            # Existing — push any field diffs.
+            diff = {k: v for k, v in payload.items()
+                    if k != "lifeos_sync_id" and existing.get(k) != v and v is not None}
+            if not diff:
+                continue
+            if dry_run:
+                logger.info("[dry-run] PUT /dates/%s diff=%s", existing["id"], sorted(diff.keys()))
+                out["update"] += 1
+            else:
+                try:
+                    client.dates_update(existing["id"], diff)
+                    note.frontmatter[KEY_LIFEOS_ID] = existing["id"]
+                    note.frontmatter[KEY_LIFEOS_SYNCED] = _now_iso()
+                    note.path.write_text(_dump_frontmatter(note.frontmatter, note.body), encoding="utf-8")
+                    out["update"] += 1
+                except LifeOSError as exc:
+                    logger.error("date update failed for %s: %s", note.path, exc)
+                    out["errors"] += 1
+
+    return out
+
+
 # ── entrypoint ──────────────────────────────────────────────────────────────
 
 
-def run(dry_run: bool, want_json: bool) -> int:
-    vault = config.vault_path()
-    client = LifeOSClient()
-
-    notes = list(iter_task_notes(vault))
+def _sync_tasks(client: LifeOSClient, vault: Path, dry_run: bool) -> dict:
+    notes = list(iter_notes_of_type(vault, "task"))
     notes_by_path = {n.path: n for n in notes}
     logger.info("Found %d task notes in %s", len(notes), vault)
 
     try:
         lifeos_resp = client.tasks_list(start_date="2020-01-01", end_date="2099-12-31")
     except LifeOSError as exc:
-        logger.error("Cannot reach life-os: %s", exc)
-        return 2
+        logger.error("Cannot reach life-os /tasks: %s", exc)
+        return {"create": 0, "update_definition": 0, "pull_execution": 0, "noop": 0, "errors": 1}
+
     lifeos_tasks = lifeos_resp.get("tasks", [])
     logger.info("life-os has %d tasks", len(lifeos_tasks))
 
     plan = build_plan(notes, lifeos_tasks)
     summary = apply_plan(plan, notes_by_path, client, dry_run=dry_run)
     summary["plan"] = plan.summary()
-    summary["dry_run"] = dry_run
+    return summary
+
+
+def run(dry_run: bool, want_json: bool, entities: list[str]) -> int:
+    vault = config.vault_path()
+    client = LifeOSClient()
+
+    overall: dict = {"dry_run": dry_run, "entities": entities}
+
+    if "tasks" in entities:
+        overall["tasks"] = _sync_tasks(client, vault, dry_run)
+    if "goals" in entities:
+        overall["goals"] = sync_goals(client, vault, dry_run)
+    if "dates" in entities:
+        overall["dates"] = sync_dates(client, vault, dry_run)
 
     if want_json:
-        print(json.dumps(summary, indent=2, sort_keys=True))
+        print(json.dumps(overall, indent=2, sort_keys=True, default=str))
     else:
-        logger.info("Summary: %s", summary)
-    return 0 if summary["errors"] == 0 else 1
+        logger.info("Summary: %s", overall)
+
+    # Exit non-zero if any sub-sync reported errors.
+    any_errors = any(
+        isinstance(v, dict) and v.get("errors", 0) > 0
+        for k, v in overall.items()
+        if k not in {"dry_run", "entities"}
+    )
+    return 1 if any_errors else 0
 
 
 def main(argv: Optional[list[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description="Sync vault task notes <-> life-os")
+    parser = argparse.ArgumentParser(
+        description="Sync vault notes <-> life-os (tasks, goals, important dates)"
+    )
     parser.add_argument("--dry-run", action="store_true", help="Plan only; do not call the API")
     parser.add_argument("--json", action="store_true", help="Print machine-readable summary")
     parser.add_argument("--verbose", "-v", action="store_true")
+    parser.add_argument(
+        "--entities",
+        default="tasks,goals,dates",
+        help="Comma-separated list of entities to sync. Default: tasks,goals,dates",
+    )
     args = parser.parse_args(argv)
 
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
-    return run(dry_run=args.dry_run, want_json=args.json)
+
+    entities = [e.strip() for e in args.entities.split(",") if e.strip()]
+    valid = {"tasks", "goals", "dates"}
+    unknown = [e for e in entities if e not in valid]
+    if unknown:
+        parser.error(f"Unknown entity types: {unknown}. Valid: {sorted(valid)}")
+
+    return run(dry_run=args.dry_run, want_json=args.json, entities=entities)
 
 
 if __name__ == "__main__":

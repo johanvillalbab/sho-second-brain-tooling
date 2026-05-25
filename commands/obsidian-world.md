@@ -26,6 +26,20 @@ Use the obsidian-second-brain skill. Execute `/obsidian-world`:
    - Read the last 3 daily notes for recent momentum and open threads
    - Scan active kanban boards for in-progress and overdue items
    - Check for session digests from previous conversations (look for "End of Day" or "Session Digest" sections)
+   - **Pull today's calendar as ephemeral context** (do NOT persist; the
+     daily note's `## Calendar (snapshot)` is `/obsidian-daily`'s job):
+
+     ```bash
+     python3 -m scripts.sync.calendar_cli events \
+         --start <today>T00:00:00-05:00 \
+         --end   <today>T23:59:59-05:00
+     ```
+
+     Surface a 1-line summary of the day's events to the user as part of
+     the boot-up status (count + first event time + last event time, or
+     "calendar empty today"). If `calendar_status` returns
+     `{"configured": false}` or the call errors, mention that the
+     calendar bridge isn't wired and move on — don't block the boot.
 
    **L3 — Deep Context (on demand, ~5-20K tokens)**
    - Only load if needed for a specific question or task

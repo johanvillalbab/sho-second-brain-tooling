@@ -151,6 +151,57 @@ priority, dates, area, goal, existence). life-os owns EXECUTION fields
 the last sync, the vault wins for definition, life-os wins for execution,
 and a `## Sync conflict` block is appended to the note for human review.
 
+### `type: goal`
+The 8 intentional goals for the year. Owned by the vault; pushed to life-os
+via `/obsidian-lifeos-sync` and surfaced in `/goals`.
+```yaml
+date: YYYY-MM-DD
+type: goal
+number: 5                     # 1-8 (matches life-os Goal.number, immutable)
+area: professional            # priority area: god | self | family | service | professional | secular
+emoji: "🚀"                   # display emoji
+title: "Become Latin America's leading AI/UX reference"
+statement: |
+  By December 2026, I will be recognized as the leading AI/UX
+  reference in Latin America, with consistently published
+  educational content and at least 3 companies trained.
+quarter_status:               # q1-q4: on_track | at_risk | off_track | completed
+  1: on_track
+  2: on_track
+  3: on_track
+  4: on_track
+next_steps:                   # additive sync: new strings appear in life-os; no edits/deletes yet
+  - "Define unique positioning statement as AI/UX reference"
+  - "Choose and launch community platform in Q1"
+  - "Structure and price corporate training offering"
+tags: [goal, ...]
+ai-first: true
+
+# ── life-os sync ──
+lifeos-synced: 2026-05-25T15:00:00Z   # last successful push
+```
+
+### `type: important-date`
+Family birthdays, anniversaries, ministry/school anchors. Owned by the vault;
+pushed to life-os via `/obsidian-lifeos-sync` and surfaced in `/dates`.
+```yaml
+date: YYYY-MM-DD              # the date of the event itself
+type: important-date
+event: "Wife's birthday"
+note: "5 days after anniversary — most meaningful poem of the year"
+area: family                  # priority area
+category: birthday            # birthday | ministry | school | review | anniversary | other
+important: true               # optional, defaults false; renders with emphasis in /dates
+recurrence: yearly            # yearly | once (defaults yearly)
+tags: [important-date, ...]
+ai-first: true
+
+# ── life-os sync ──
+lifeos-sync-id: <uuid>        # minted by the bridge on first push
+lifeos-id: 42                 # numeric ImportantDate.id from life-os
+lifeos-synced: 2026-05-25T15:00:00Z
+```
+
 ### `type: decision`
 Decisions usually live INSIDE project notes' Key Decisions sections. When a standalone decision note is needed:
 ```yaml
