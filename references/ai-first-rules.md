@@ -161,6 +161,45 @@ tags: [review, ...]
 ai-first: true
 ```
 
+### `type: agenda-snapshot`
+Point-in-time snapshot of the user's Google Calendar, written by `/obsidian-agenda`. The calendar is the source of truth; the note is a re-derivable view. Default path: `wiki/agenda/YYYY-MM-DD — <range-label>.md`.
+```yaml
+date: YYYY-MM-DD              # date the snapshot was generated
+type: agenda-snapshot
+range: "YYYY-MM-DD..YYYY-MM-DD"
+range-label: today | tomorrow | week | next-week | day | range
+calendar-source: google-calendar
+calendars: [primary]          # list of calendar IDs included
+fetched-at: "YYYY-MM-DDTHH:MM:SS±HH:MM"   # ISO 8601 with offset — the recency anchor
+event-count: <integer>
+conflict-count: <integer>
+superseded-at: "YYYY-MM-DDTHH:MM:SS±HH:MM"   # only when refreshing an older snapshot
+tags: [agenda, calendar]
+ai-first: true
+```
+
+### `type: meeting`
+Vault record of a specific meeting, written by `/obsidian-meeting` from a Google Calendar event. The calendar event remains authoritative for time and attendees; this note is authoritative for what was said, decided, and acted on. Default path: `wiki/meetings/YYYY-MM-DD — <slug>.md`.
+```yaml
+date: YYYY-MM-DD              # event's start date in user's TZ
+type: meeting
+event-id: <google-event-id>
+event-url: <htmlLink>
+conference-url: <hangoutLink>     # optional, only if present
+start: "YYYY-MM-DDTHH:MM:SS±HH:MM"
+end: "YYYY-MM-DDTHH:MM:SS±HH:MM"
+duration-min: <integer>
+location: ""                      # verbatim from event; empty string if none
+organizer: "<email>"
+attendees: ["[[Person Name]]", ...]
+recurrence: "<recurringEventId>"  # optional, only if recurring
+linked-task: "[[wiki/tasks/...]]" # optional, when a scheduled task spawned this meeting
+related-projects: ["[[Projects/...]]", ...]
+calendar-source: google-calendar
+tags: [meeting]                   # add `prep` tag when the meeting hasn't happened yet
+ai-first: true
+```
+
 ### `type: research` / `type: research-deep` / `type: x-read` / `type: x-pulse` / `type: youtube`
 See `commands/research*.md` and `commands/x-*.md` and `commands/youtube.md` for the full schemas. All set `ai-first: true` and follow the universal rules.
 
@@ -244,6 +283,18 @@ Dev log for [date] about [project]. Captures work done, problems encountered, de
 ```markdown
 ## For future Claude
 Architectural decision record from [date]. Documents a structural decision in the vault (folder rename, schema change, etc.) so future-Claude can answer "why is the vault structured this way?" without re-deriving the reasoning.
+```
+
+### Agenda snapshot
+```markdown
+## For future Claude
+Point-in-time snapshot of the user's Google Calendar for [range], generated on [fetched-at]. Google Calendar is the source of truth — this note is a re-derivable view. To refresh, re-run `/obsidian-agenda [range-label]`. The `fetched-at` timestamp in frontmatter is the recency anchor; treat individual event details as stale beyond that point.
+```
+
+### Meeting
+```markdown
+## For future Claude
+Vault record of a meeting on [date] with [attendees]. The calendar event ([event-url]) remains the source of truth for time and attendees; this note is the source of truth for what was discussed, decided, and committed to. The Notes / Decisions / Action items sections are filled by the human or by `/obsidian-save` from conversation context — not speculation.
 ```
 
 ---

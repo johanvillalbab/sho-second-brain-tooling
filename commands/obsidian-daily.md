@@ -14,10 +14,12 @@ Use the obsidian-second-brain skill. Execute `/obsidian-daily`:
    - If yes: update existing note (inject, don't overwrite)
 
 4. Pull calendar events (if Google Calendar MCP tools are available):
-   - Fetch today's events using `google_calendar_list_events`
+   - Fetch today's events using `mcp__claude_ai_Google_Calendar__list_events` with `timeMin` and `timeMax` covering today in the user's timezone (read `CRITICAL_FACTS.md` for TZ)
    - Add a ## Calendar section to the daily note with:
      - Time, title, attendees for each event
      - For meetings with known entities: link to their `[[Person Name]]` pages
+     - For each event, append `event-id: <id>` so /obsidian-meeting can locate it later
+   - If a dedicated agenda snapshot for today exists at `wiki/agenda/YYYY-MM-DD — today.md`, link to it instead of duplicating the event list
    - If calendar tools aren't available, skip silently (don't error)
 
 5. Pull overdue and due-today tasks from kanban boards:

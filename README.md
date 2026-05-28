@@ -34,14 +34,14 @@
   <br /><br />
   <em>Every source updates existing pages instead of just appending new ones. Contradictions reconcile automatically. Your vault compounds while you sleep.</em>
   <br /><br />
-  <em>33 commands &middot; auto-synthesis &middot; thinking tools that argue with you</em>
+  <em>36 commands &middot; auto-synthesis &middot; thinking tools that argue with you</em>
   <br /><br />
   <em>live research from X, the web, and YouTube &middot; 4 scheduled agents &middot; 4 role presets</em>
   <br /><br />
   <em>write-time AI-first validator &middot; <code>/create-command</code> interview flow &middot; multilingual trigger schema</em>
   <br /><br />
   <a href="#what-happens-when-you-install-this">See it in action</a> &middot;
-  <a href="#33-commands">All commands</a> &middot;
+  <a href="#36-commands">All commands</a> &middot;
   <a href="#install">Install</a> &middot;
   <a href="#choose-your-preset">Presets</a> &middot;
   <a href="https://github.com/eugeniughelbur/obsidian-second-brain/discussions">Discussions</a>
@@ -251,7 +251,7 @@ Free transcript via youtube-transcript-api. Optional metadata + top comments via
 
 ---
 
-## 33 Commands
+## 36 Commands
 
 ### Operations -- Claude remembers
 
@@ -263,6 +263,9 @@ Free transcript via youtube-transcript-api. Optional metadata + top comments via
 | `/obsidian-reconcile` | Finds contradictions and resolves them. The vault maintains its own truth. |
 | `/obsidian-export` | Clean JSON/markdown snapshot any AI tool can read |
 | `/obsidian-daily` | Creates or updates today's daily note |
+| `/obsidian-agenda` | Reads Google Calendar and writes an AI-first snapshot to the vault (today / week / next-week / range). Claude Code only — needs the Google Calendar MCP. |
+| `/obsidian-schedule` | Creates or moves a Google Calendar event — standalone, from a vault task, or via suggested-time slots. Backlinks the event into the task's frontmatter. Claude Code only. |
+| `/obsidian-meeting` | Generates a vault meeting note from a Calendar event (last / next / by ID / fuzzy title). Pre-links attendees and any task that spawned the meeting. Claude Code only. |
 | `/obsidian-log` | Logs a work session, links it everywhere |
 | `/obsidian-task` | Adds task to the right board with priority and due date |
 | `/obsidian-person` | Creates or updates a person note |

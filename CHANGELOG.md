@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- **Google Calendar integration via MCP (Claude Code only) — three new commands.** `/obsidian-agenda [today | tomorrow | week | next-week | YYYY-MM-DD | YYYY-MM-DD..YYYY-MM-DD]` reads the user's primary Google Calendar via `mcp__claude_ai_Google_Calendar__list_events` and writes a point-in-time AI-first snapshot to `wiki/agenda/YYYY-MM-DD — <range-label>.md` with full frontmatter (`type: agenda-snapshot`, `fetched-at`, `event-count`, `conflict-count`), attendees cross-linked to `[[Person Name]]` notes, conflicts and focus blocks called out, and a one-line back-reference injected into today's daily note. `/obsidian-schedule` writes to Calendar in three modes — standalone (`"<title>" <when> <duration>`), from a vault task (`task:<path-or-fuzzy> <when>`), and suggest-time (`task:<...> suggest:<window>` via `mcp__claude_ai_Google_Calendar__suggest_time`). In task modes it resolves attendee emails by reading `email:` from each `[[Person Name]]` note (never guesses), checks for conflicts before writing, calls `create_event` (or `update_event` for reschedules), and merges `scheduled-at`, `calendar-event-id`, `calendar-event-url`, `calendar-meet-url` back into the task's frontmatter so the link is round-trippable. `/obsidian-meeting [last | next | today | event-id:<id> | <fuzzy>]` generates a vault meeting note at `wiki/meetings/YYYY-MM-DD — <slug>.md` from a Calendar event, pre-fills attendees as `[[wikilinks]]`, backlinks any task whose frontmatter `calendar-event-id` matches, and propagates one-line entries into each attendee's Recent Interactions and into today's daily note. All three commands declare `exclude: [codex-cli, gemini-cli, opencode]` because the underlying MCP only exists on Claude Code — the other platform builds omit them automatically. New schemas added to `references/ai-first-rules.md`: `type: agenda-snapshot` and `type: meeting`, with preamble templates. No new Python dependencies, no service proxy, no extra OAuth — the integration relies entirely on the user's authenticated Google Calendar MCP. Command count: 33 → 36.
+
+### Fixed
+
+- **`/obsidian-daily` calendar tool name was wrong.** The stub at step 4 referenced `google_calendar_list_events` (a generic placeholder that never matched any real MCP tool), so the `## Calendar` section was always empty even when the Google Calendar MCP was enabled. Now uses `mcp__claude_ai_Google_Calendar__list_events` with proper `timeMin` / `timeMax` derived from `CRITICAL_FACTS.md` timezone, captures `event-id` per event for later `/obsidian-meeting` lookups, and links to the dedicated agenda snapshot if one exists for the day instead of duplicating the event list. The graceful "skip silently if calendar tools aren't available" behavior is preserved for non-Claude-Code platform builds.
+
 ## [0.8.0] — 2026-05-15
 
 ### Added

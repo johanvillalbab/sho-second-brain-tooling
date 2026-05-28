@@ -102,7 +102,7 @@ See `references/vault-schema.md` for full structural details.
 ## Core Operating Principles
 
 ### AI-first vault rule (applies to every note)
-The vault is designed for **future-Claude** to read and reason over, not for human review. Every note Claude writes — across all 32 commands — must follow `references/ai-first-rules.md`:
+The vault is designed for **future-Claude** to read and reason over, not for human review. Every note Claude writes — across all 36 commands — must follow `references/ai-first-rules.md`:
 
 1. **Self-contained context** — each note explains itself; don't rely on backlinks alone
 2. **"For future Claude" preamble** — 2-3 sentence summary so Claude can decide relevance in 10 seconds
@@ -383,6 +383,65 @@ Steps:
 4. Add the task card to the correct column (`📋 This Week` or `📥 Backlog` depending on due date)
 5. Create a task note in `Tasks/` if the task is substantial (more than a one-liner)
 6. Link the task from the relevant project note and today's daily note
+
+---
+
+### `/obsidian-agenda [today | tomorrow | week | next-week | YYYY-MM-DD | YYYY-MM-DD..YYYY-MM-DD]`
+
+**Reads Google Calendar and writes an AI-first snapshot to the vault.**
+
+Requires the Google Calendar MCP (Claude Code only — excluded from Codex CLI / Gemini CLI / OpenCode builds).
+
+Steps:
+1. Read `_CLAUDE.md` and `CRITICAL_FACTS.md` for vault conventions and timezone
+2. Resolve the range argument (default: `today`) into ISO 8601 `timeMin` / `timeMax`
+3. Call `mcp__claude_ai_Google_Calendar__list_events` against the primary calendar
+4. Cross-link every attendee to an existing person note as `[[Person Name]]`; flag unknowns
+5. Detect conflicts, back-to-back stretches, focus blocks, and externally-organized events
+6. Write `wiki/agenda/YYYY-MM-DD — <range-label>.md` with full AI-first frontmatter (`type: agenda-snapshot`, `fetched-at`, `event-count`, `conflict-count`)
+7. Append to `log.md`, inject a `## Calendar` link into today's daily note
+8. Report in chat: per-day counts, conflicts, focus blocks, any `(unknown person)` attendees
+
+---
+
+### `/obsidian-schedule "<title>" <when> <duration>` | `task:<path-or-fuzzy> <when>` | `task:<...> suggest:<window>`
+
+**Creates or moves a Google Calendar event and backlinks it to a vault task.**
+
+Requires the Google Calendar MCP (Claude Code only).
+
+Three modes:
+- **Standalone** — `/obsidian-schedule "Sync with Acme" 2026-06-02 14:00 60min`
+- **From task** — `/obsidian-schedule task:wiki/tasks/<file>.md 2026-06-02 14:00 30min`
+- **Suggest time** — `/obsidian-schedule task:onboarding-call suggest:next-week 45min` (uses `mcp__claude_ai_Google_Calendar__suggest_time`)
+
+Steps:
+1. Parse mode, locate the task (Mode B/C) by path or fuzzy match
+2. Resolve attendee emails by reading `email:` from each `[[Person Name]]` note — never guess
+3. Conflict-check the proposed slot via `list_events`; ask before double-booking
+4. Mode C: present suggested slots and wait for selection
+5. Call `mcp__claude_ai_Google_Calendar__create_event` (or `update_event` if rescheduling)
+6. Mode B/C: merge `scheduled-at`, `calendar-event-id`, `calendar-event-url`, `calendar-meet-url` into the task's frontmatter and append a `Scheduled:` line to the body
+7. Update person notes' `last-interaction`, append to `log.md`, inject into today's daily note
+8. Report event URL, attendees invited vs. skipped, and any missing-email reminders
+
+---
+
+### `/obsidian-meeting [last | next | today | event-id:<id> | <fuzzy title>]`
+
+**Generates a vault meeting note from a Google Calendar event.**
+
+Requires the Google Calendar MCP (Claude Code only). Default argument: `last`.
+
+Steps:
+1. Resolve the event (last past / next upcoming / pick from today / by ID / fuzzy match within ±14 days)
+2. Fetch full event detail via `mcp__claude_ai_Google_Calendar__get_event`
+3. Cross-link attendees to person notes; mark unknowns
+4. Look up any vault task whose frontmatter `calendar-event-id` matches — capture the backlink
+5. Write `wiki/meetings/YYYY-MM-DD — <slug>.md` with `type: meeting` frontmatter (event-id, event-url, start, end, attendees, organizer, recurrence, linked-task, ai-first preamble, Context / Attendees / Notes / Decisions / Action items / Source sections)
+6. Propagate: append to each attendee's `## Recent Interactions`, backlink from the linked task, inject into today's daily note under `## Meetings`
+7. For `next` mode, tag the note with `prep` and label the preamble as pre-meeting prep
+8. Report path, attendee match counts, and any missing person notes
 
 ---
 
