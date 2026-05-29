@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Pre-commit hook: block em-dashes in user-facing markdown prose (CLAUDE.md rule).
+# Enable once per clone with:  git config core.hooksPath .githooks
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+
+# Any staged added/modified markdown files? (portable; no mapfile)
+if ! git diff --cached --name-only --diff-filter=ACM -- '*.md' | grep -q .; then
+  exit 0
+fi
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "pre-commit: python3 not found, skipping em-dash check." >&2
+  exit 0
+fi
+
+# Pass staged .md paths NUL-delimited so filenames with spaces survive.
+if ! git diff --cached --name-only -z --diff-filter=ACM -- '*.md' \
+  | xargs -0 python3 "$repo_root/scripts/lint_emdashes.py"; then
+  echo "" >&2
+  echo "Commit blocked: em-dashes found in prose. Fix with:" >&2
+  echo "  python3 scripts/lint_emdashes.py --fix" >&2
+  echo "then re-stage and commit. (CLAUDE.md: no em-dashes in user-facing prose.)" >&2
+  exit 1
+fi

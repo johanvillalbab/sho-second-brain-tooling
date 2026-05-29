@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/eugeniughelbur/obsidian-second-brain">
-    <img src="media/banner.png" alt="obsidian-second-brain — one brain, four CLIs, 33 commands. A cross-CLI skill for Obsidian that runs on Claude Code, Codex CLI, Gemini CLI, and OpenCode." width="100%" />
+    <img src="media/banner.png" alt="obsidian-second-brain - one brain, four CLIs, 33 commands. A cross-CLI skill for Obsidian that runs on Claude Code, Codex CLI, Gemini CLI, and OpenCode." width="100%" />
   </a>
 </p>
 
@@ -163,7 +163,7 @@ Claude searches your vault for past failures and reversed decisions on the same 
 **You want to see the big picture:** `/obsidian-visualize`
 Claude generates a visual canvas of your entire vault. Hub nodes centered, color-coded by type, orphans highlighted. Open it in Obsidian and see the shape of your knowledge.
 
-**You go to sleep:** The nightly agent runs 5 phases — closes the day, reconciles contradictions, synthesizes cross-source patterns, heals orphan notes, and rebuilds the index. You wake up to a smarter vault.
+**You go to sleep:** The nightly agent runs 5 phases - closes the day, reconciles contradictions, synthesizes cross-source patterns, heals orphan notes, and rebuilds the index. You wake up to a smarter vault.
 
 **You start a new day:** `/obsidian-daily`
 Claude pulls your calendar events, overdue tasks, and overnight changes into today's note. Your morning starts informed.
@@ -178,7 +178,7 @@ Grok scans X for what's trending in your topic right now. Returns 3-5 emerging t
 Perplexity Sonar Pro pulls a deep dossier with citations: summary, key facts (every claim with a recency marker and source domain), timeline, key players, contrarian views, recommended further reading, open questions. Saved to your vault, auto-opens in Obsidian.
 
 **You want vault-first deep research:** `/research-deep "AI memory tools"`
-Scans your vault for what you already know. Identifies gaps. Spawns 3-5 targeted searches via Perplexity (web) and Grok (X discourse). Synthesizes a delta report — what's new, what's confirmed, contradictions to resolve, recommended vault updates. Vault baseline doesn't get re-researched. Only gaps get filled.
+Scans your vault for what you already know. Identifies gaps. Spawns 3-5 targeted searches via Perplexity (web) and Grok (X discourse). Synthesizes a delta report - what's new, what's confirmed, contradictions to resolve, recommended vault updates. Vault baseline doesn't get re-researched. Only gaps get filled.
 
 **You hit a great YouTube video:** `/youtube https://youtu.be/...`
 Free transcript via youtube-transcript-api. Optional metadata + top comments via YouTube Data API v3. Grok summarizes into TL;DR, Key Points, Notable Quotes (verbatim), Themes, Comment Sentiment, and Worth Following Up On. Saved as an AI-first note in your vault.
@@ -263,11 +263,11 @@ Free transcript via youtube-transcript-api. Optional metadata + top comments via
 | `/obsidian-reconcile` | Finds contradictions and resolves them. The vault maintains its own truth. |
 | `/obsidian-export` | Clean JSON/markdown snapshot any AI tool can read |
 | `/obsidian-daily` | Creates or updates today's daily note |
-| `/obsidian-agenda` | Reads Google Calendar and writes an AI-first snapshot to the vault (today / week / next-week / range). Claude Code only — needs the Google Calendar MCP. |
-| `/obsidian-schedule` | Creates or moves a Google Calendar event — standalone, from a vault task, or via suggested-time slots. Backlinks the event into the task's frontmatter. Claude Code only. |
+| `/obsidian-agenda` | Reads Google Calendar and writes an AI-first snapshot to the vault (today / week / next-week / range). Claude Code only - needs the Google Calendar MCP. |
+| `/obsidian-schedule` | Creates or moves a Google Calendar event - standalone, from a vault task, or via suggested-time slots. Backlinks the event into the task's frontmatter. Claude Code only. |
 | `/obsidian-meeting` | Generates a vault meeting note from a Calendar event (last / next / by ID / fuzzy title). Pre-links attendees and any task that spawned the meeting. Claude Code only. |
 | `/obsidian-log` | Logs a work session, links it everywhere |
-| `/obsidian-task` | Adds task to the right board with priority and due date |
+| `/obsidian-task` | Adds task to the right board and a first-class `Tasks/` note with `area` and `depends-on` (feeds the companion [obsidian-task-graph](../obsidian-task-graph) plugin) |
 | `/obsidian-person` | Creates or updates a person note |
 | `/obsidian-decide` | Logs decisions to the right project note |
 | `/obsidian-capture` | Zero-friction idea capture |
@@ -278,10 +278,10 @@ Free transcript via youtube-transcript-api. Optional metadata + top comments via
 | `/obsidian-project` | Project note with board and daily links |
 | `/obsidian-health` | Vault audit -- contradictions, gaps, stale claims, orphans |
 | `/obsidian-adr` | Decision records -- the vault knows why it's structured this way |
-| `/obsidian-visualize` | Generates a visual canvas map — see the shape of your second brain |
+| `/obsidian-visualize` | Generates a visual canvas map - see the shape of your second brain |
 | `/obsidian-learn` | Reviews vault learnings, prunes stale ones, surfaces patterns to promote into rules |
 | `/obsidian-init` | Generates `_CLAUDE.md`, `index.md`, `log.md` |
-| `/create-command` | Interview flow that scaffolds a new command into `commands/<name>.md` — zero markdown editing |
+| `/create-command` | Interview flow that scaffolds a new command into `commands/<name>.md` - zero markdown editing |
 
 ### Thinking -- Claude thinks with you
 
@@ -304,10 +304,10 @@ Powered by xAI Grok (live X access) + Perplexity Sonar (web research) + YouTube.
 
 | Command | What it does |
 |---|---|
-| `/x-read [url]` | Deep-read an X post — verbatim post + thread + TL;DR + claims + reply sentiment + voices |
-| `/x-pulse [topic]` | Scan X for what's trending — themes, voices, hooks, post ideas |
-| `/research [topic]` | Web research with citations — full dossier with recency markers and open questions |
-| `/research-deep [topic]` | Vault-first synthesis (open web) — scans your vault, finds gaps, fills them via Perplexity + Grok, propagates updates across people/projects/ideas |
+| `/x-read [url]` | Deep-read an X post - verbatim post + thread + TL;DR + claims + reply sentiment + voices |
+| `/x-pulse [topic]` | Scan X for what's trending - themes, voices, hooks, post ideas |
+| `/research [topic]` | Web research with citations - full dossier with recency markers and open questions |
+| `/research-deep [topic]` | Vault-first synthesis (open web) - scans your vault, finds gaps, fills them via Perplexity + Grok, propagates updates across people/projects/ideas |
 | `/notebooklm [topic]` | Vault-grounded synthesis via Gemini File Search. Uploads top 12 vault notes, returns a grounded answer with citations. No browser, one HTTP call. Pairs with `/research-deep` for dual-track research. |
 | `/youtube [url]` | Extract transcript + metadata + top comments → AI-first summary |
 
@@ -373,7 +373,7 @@ An idea from 3 weeks ago. Claude reads it, finds related projects and people, ge
 
 **`/x-read https://x.com/garrytan/status/2048121438914154664`**
 
-Grok with live X access fetches the post and replies. You get verbatim text, TL;DR, key claims, reply sentiment (~70% positive, 20% skeptical, 10% off-topic), notable counter-arguments with the @ handles of who said them, and "voices to watch" — replies that added real signal. ~$0.05/call.
+Grok with live X access fetches the post and replies. You get verbatim text, TL;DR, key claims, reply sentiment (~70% positive, 20% skeptical, 10% off-topic), notable counter-arguments with the @ handles of who said them, and "voices to watch" - replies that added real signal. ~$0.05/call.
 
 ---
 
@@ -407,7 +407,7 @@ Returns a structured dossier: Summary, Key Facts (each with `(as of YYYY-MM, sou
 
 ---
 
-**`/research-deep "AI memory tools"`** — the killer
+**`/research-deep "AI memory tools"`** - the killer
 
 ```
 Phase 1: Vault scan
@@ -435,7 +435,7 @@ Vault-first means it doesn't waste tokens re-researching what you already knew. 
 
 ---
 
-**`/notebooklm "AI-first vault rule"`** — vault-grounded, no browser
+**`/notebooklm "AI-first vault rule"`** - vault-grounded, no browser
 
 Scans the vault, uploads the top 12 most relevant notes to a Gemini File Search store, asks Gemini 2.5 Flash to synthesize against THOSE sources only with citations, writes the synthesis to `Research/NotebookLM/` as an AI-first note, deletes the store.
 
@@ -459,7 +459,7 @@ Free transcript via youtube-transcript-api + optional metadata + comments via Yo
 
 ---
 
-**Auto-open after every save** — Obsidian pops open at the new note. Disable with `RESEARCH_AUTOOPEN=0` if you're running batch saves.
+**Auto-open after every save** - Obsidian pops open at the new note. Disable with `RESEARCH_AUTOOPEN=0` if you're running batch saves.
 
 </details>
 
@@ -568,7 +568,7 @@ python bootstrap_vault.py --path ~/my-vault --name "Your Name" --style obsidian
 
 ## Install
 
-> **One codebase, four platforms.** Pick yours below. The vault behavior is identical across all four — only the install path and the dispatcher file (`CLAUDE.md` / `AGENTS.md` / `GEMINI.md`) differ.
+> **One codebase, four platforms.** Pick yours below. The vault behavior is identical across all four - only the install path and the dispatcher file (`CLAUDE.md` / `AGENTS.md` / `GEMINI.md`) differ.
 
 ### Claude Code (default)
 
@@ -602,7 +602,7 @@ Run `bash scripts/build.sh` with no arguments to build all four platforms at onc
 
 ### Research toolkit (optional)
 
-The 6 research commands need API keys. Run `install.sh` and answer "y" to the research prompt — it'll set up `~/.config/obsidian-second-brain/.env`. Or do it manually:
+The 6 research commands need API keys. Run `install.sh` and answer "y" to the research prompt - it'll set up `~/.config/obsidian-second-brain/.env`. Or do it manually:
 
 ```bash
 mkdir -p ~/.config/obsidian-second-brain
@@ -646,7 +646,7 @@ Yes. The repo ships a build script that compiles the platform-neutral source int
 Yes. The skill writes to your vault as standard markdown files. Obsidian Sync, iCloud, Syncthing, and Git-based sync all work without modification.
 
 ### Do I need API keys to use this?
-No. The original 27 vault commands (`/obsidian-save`, `/obsidian-daily`, etc.) work without any API keys. Only the 6 research commands (`/x-read`, `/x-pulse`, `/research`, `/research-deep`, `/notebooklm`, `/youtube`) require API keys for xAI Grok, Perplexity, Google Gemini, and optionally YouTube Data API v3. Without keys, those commands degrade gracefully — they exit with a clear setup message.
+No. The original 27 vault commands (`/obsidian-save`, `/obsidian-daily`, etc.) work without any API keys. Only the 6 research commands (`/x-read`, `/x-pulse`, `/research`, `/research-deep`, `/notebooklm`, `/youtube`) require API keys for xAI Grok, Perplexity, Google Gemini, and optionally YouTube Data API v3. Without keys, those commands degrade gracefully - they exit with a clear setup message.
 
 ### How is this different from Notion AI or Mem?
 Notion AI and Mem are closed-source SaaS products that own your data. This skill stores everything as plain markdown in your local Obsidian vault, with no vendor lock-in. The AI is on top of your data, not behind it. You can switch tools or stop using the skill at any point and still have your full vault.
@@ -661,10 +661,10 @@ Yes. The skill never deletes or modifies notes destructively without explicit co
 `/research` runs a single Perplexity query and returns a dossier with citations. `/research-deep` is vault-first: it scans your existing notes, identifies what you already know about the topic, spawns 3-5 targeted follow-up searches to fill only the gaps, and produces a delta report (what's new, what's confirmed, contradictions to resolve, recommended vault updates). Vault-first means you stop re-researching what's already in your notes.
 
 ### What do the research commands cost?
-Approximate per-call costs as of 2026-04: `/x-read` ~$0.05, `/x-pulse` ~$0.13, `/research` ~$0.04, `/research-deep` ~$0.40-$0.80, `/youtube` ~$0.04. Costs for Grok calls are logged to `~/.research-toolkit/usage.log` for visibility. No hard caps — you're trusted to monitor your own spend.
+Approximate per-call costs as of 2026-04: `/x-read` ~$0.05, `/x-pulse` ~$0.13, `/research` ~$0.04, `/research-deep` ~$0.40-$0.80, `/youtube` ~$0.04. Costs for Grok calls are logged to `~/.research-toolkit/usage.log` for visibility. No hard caps - you're trusted to monitor your own spend.
 
 ### Can I use this on Windows or Linux?
-The core vault commands work anywhere Claude Code runs. The research toolkit was tested on macOS — `install.sh` and the auto-open behavior assume macOS conventions (`~/.config`, `open` command). Pull requests welcome to add Windows and Linux paths.
+The core vault commands work anywhere Claude Code runs. The research toolkit was tested on macOS - `install.sh` and the auto-open behavior assume macOS conventions (`~/.config`, `open` command). Pull requests welcome to add Windows and Linux paths.
 
 ### How do I update to the latest version?
 ```bash
@@ -673,7 +673,7 @@ cd ~/.claude/skills/obsidian-second-brain && git pull
 Nothing to re-run. Commands pick up the new instructions automatically. See [CHANGELOG.md](CHANGELOG.md) for what's in each release.
 
 ### Where do I file issues or feature requests?
-GitHub Issues: https://github.com/eugeniughelbur/obsidian-second-brain/issues. PRs welcome — see Contributing below.
+GitHub Issues: https://github.com/eugeniughelbur/obsidian-second-brain/issues. PRs welcome - see Contributing below.
 
 ---
 
@@ -704,7 +704,7 @@ PRs welcome:
 
 ## Sponsors
 
-Sponsorships help fund ongoing development of obsidian-second-brain — new commands, research-toolkit API costs, and ongoing maintenance.
+Sponsorships help fund ongoing development of obsidian-second-brain - new commands, research-toolkit API costs, and ongoing maintenance.
 
 [![Sponsor on GitHub](https://img.shields.io/badge/Sponsor-eugeniughelbur-EA4AAA?style=for-the-badge&logo=github-sponsors&logoColor=white)](https://github.com/sponsors/eugeniughelbur)
 
@@ -718,7 +718,7 @@ Sponsorships help fund ongoing development of obsidian-second-brain — new comm
 <tr>
 <td align="center" width="700">
 
-Built by **Eugeniu Ghelbur** — AI Automation Engineer @ Single Grain
+Built by **Eugeniu Ghelbur** - AI Automation Engineer @ Single Grain
 
 *If this skill helped you, the best thanks is following along.*
 

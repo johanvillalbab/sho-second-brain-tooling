@@ -34,10 +34,10 @@ Your Vault/
 ```
 
 ### Key principles:
-- **raw/ is immutable** — original sources go here. Claude reads them but never modifies them. If a wiki page gets corrupted, re-derive from raw.
-- **wiki/ is Claude's workspace** — Claude is the sole writer. Every entity, concept, and project lives here.
-- **index.md is the front door** — Claude reads this first to navigate. Cheaper and faster than searching.
-- **Flat folders over nested** — `wiki/entities/` is a flat list. Harder for humans to browse, perfect for Claude to grep and index.
+- **raw/ is immutable** - original sources go here. Claude reads them but never modifies them. If a wiki page gets corrupted, re-derive from raw.
+- **wiki/ is Claude's workspace** - Claude is the sole writer. Every entity, concept, and project lives here.
+- **index.md is the front door** - Claude reads this first to navigate. Cheaper and faster than searching.
+- **Flat folders over nested** - `wiki/entities/` is a flat list. Harder for humans to browse, perfect for Claude to grep and index.
 
 ---
 
@@ -135,12 +135,19 @@ date: 2026-03-24
 tags:
   - task
 status: in-progress   # in-progress | done | waiting | cancelled
+area: professional    # life area, free-form. Suggested: god | self | family | service | professional | secular
 project: "[[Project Name]]"
 job: "[[Company]]"    # or Personal
 requested_by: "[[Person Name]]"
 due: 2026-03-28
+depends-on: ["[[Tasks/Other Task]]", ...]   # tasks this one is blocked by
 ---
 ```
+
+`area` and `depends-on` feed the companion Task Graph plugin: it clusters task cards by
+`area`, draws association lines between tasks that share a project or person, and draws
+directed arrows for each `depends-on`. The plugin writes `status` back to this frontmatter
+when you mark a card done; card positions live in the plugin's own data, not in the note.
 
 ### Entity Note (Person / Company / Tool)
 ```yaml
@@ -166,9 +173,9 @@ timeline:                       # bi-temporal facts — never delete, only appen
 ```
 
 **Bi-temporal facts rule:** never overwrite a role, company, status, or location. Add a new entry to `timeline:` with:
-- `from` / `until` — **event time**: when the fact was true in reality
-- `learned` — **transaction time**: when the vault first recorded this fact
-- `source` (optional) — where the vault learned it from (daily note, ingested source, etc.)
+- `from` / `until` - **event time**: when the fact was true in reality
+- `learned` - **transaction time**: when the vault first recorded this fact
+- `source` (optional) - where the vault learned it from (daily note, ingested source, etc.)
 
 The `role:` and `company:` top-level fields always reflect the CURRENT state. The `timeline:` preserves full history.
 

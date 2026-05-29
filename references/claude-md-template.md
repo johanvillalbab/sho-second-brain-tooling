@@ -2,7 +2,7 @@
 
 `_CLAUDE.md` is a file that lives at the root of your vault.
 It is the first thing Claude reads when working in your vault.
-It gives every Claude surface (Desktop, Code, VS Code, terminal) the same operating context — no memory required.
+It gives every Claude surface (Desktop, Code, VS Code, terminal) the same operating context - no memory required.
 
 ---
 

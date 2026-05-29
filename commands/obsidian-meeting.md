@@ -1,5 +1,5 @@
 ---
-description: Generate a meeting note in the vault from a Google Calendar event — pre-fills attendees, time, and link so notes/decisions/action items can be captured
+description: Generate a meeting note in the vault from a Google Calendar event - pre-fills attendees, time, and link so notes/decisions/action items can be captured
 category: vault
 exclude: [codex-cli, gemini-cli, opencode]
 triggers_en: ["create a meeting note", "log this meeting", "meeting note for", "prep this meeting", "notes for last meeting"]
@@ -9,11 +9,11 @@ triggers_es: ["nota de esta reunión", "crea nota de reunión", "prepara esta re
 Use the obsidian-second-brain skill. Execute `/obsidian-meeting $ARGUMENTS`:
 
 The argument selects the event. Accepted forms:
-- `last` — the most recent past event from the primary calendar (default if no argument)
-- `next` — the next upcoming event from the primary calendar
-- `today` — list today's events and ask which one
-- `event-id:<id>` — a specific Google Calendar event ID
-- A fuzzy event title — search the last 14 days and next 14 days for a matching title
+- `last` - the most recent past event from the primary calendar (default if no argument)
+- `next` - the next upcoming event from the primary calendar
+- `today` - list today's events and ask which one
+- `event-id:<id>` - a specific Google Calendar event ID
+- A fuzzy event title - search the last 14 days and next 14 days for a matching title
 
 This command requires the Google Calendar MCP tools (`mcp__claude_ai_Google_Calendar__list_events`, `mcp__claude_ai_Google_Calendar__get_event`, `mcp__claude_ai_Google_Calendar__list_calendars`). If they are not available, fail with a clear message and stop.
 
@@ -37,7 +37,7 @@ Steps:
 
 5. Locate a linked vault task, if any:
    - Search `wiki/tasks/` (and kanban boards under `boards/`) for any task whose frontmatter contains `calendar-event-id: <this-event-id>`.
-   - If found, capture its path and title — the meeting note will backlink to it.
+   - If found, capture its path and title - the meeting note will backlink to it.
 
 6. Build the meeting note. Path (wiki-style default):
    `wiki/meetings/YYYY-MM-DD — <slug>.md`
@@ -69,13 +69,13 @@ Steps:
    ```
 
 8. Body sections, in order:
-   - `## For future Claude` — 2–3 sentences: this is the vault record of a meeting on <date> with <attendees>; capture intent, notes, decisions, and action items; the event remains the source of truth for time/attendees but this note is the source of truth for what happened.
-   - `## Context` — pre-filled with the event's description verbatim (URLs preserved). If the description is empty, write "No agenda was attached to the calendar event."
-   - `## Attendees` — bulleted list of `[[Person Name]]` with their `responseStatus` (accepted / tentative / declined / needsAction) in parentheses.
-   - `## Notes` — empty section ready for the user to fill in. Do NOT write speculative content here.
-   - `## Decisions` — empty section. Once filled by the user, /obsidian-decide can propagate these to project notes.
-   - `## Action items` — empty section. Each item the user adds here should later flow into /obsidian-task.
-   - `## Source` — the verbatim `event-url` and, if present, the `conference-url`. This is the recency anchor.
+   - `## For future Claude` - 2–3 sentences: this is the vault record of a meeting on <date> with <attendees>; capture intent, notes, decisions, and action items; the event remains the source of truth for time/attendees but this note is the source of truth for what happened.
+   - `## Context` - pre-filled with the event's description verbatim (URLs preserved). If the description is empty, write "No agenda was attached to the calendar event."
+   - `## Attendees` - bulleted list of `[[Person Name]]` with their `responseStatus` (accepted / tentative / declined / needsAction) in parentheses.
+   - `## Notes` - empty section ready for the user to fill in. Do NOT write speculative content here.
+   - `## Decisions` - empty section. Once filled by the user, /obsidian-decide can propagate these to project notes.
+   - `## Action items` - empty section. Each item the user adds here should later flow into /obsidian-task.
+   - `## Source` - the verbatim `event-url` and, if present, the `conference-url`. This is the recency anchor.
 
 9. Propagate, do not orphan:
    - For each attendee that mapped to an existing `[[Person Note]]`, append a one-line entry under that person's `## Recent Interactions` section: `- YYYY-MM-DD — Meeting: [[wiki/meetings/...]]`.
@@ -93,4 +93,4 @@ Do not write fictional notes, decisions, or action items. The Notes/Decisions/Ac
 
 ---
 
-**AI-first rule:** Every note created or updated by this command MUST follow `references/ai-first-rules.md` — `## For future Claude` preamble, rich frontmatter (`type`, `date`, `tags`, `ai-first: true`, plus type-specific fields), recency markers per external claim, mandatory `[[wikilinks]]` for every person/project/concept referenced, sources preserved verbatim with URLs inline, and confidence levels where applicable. The vault is for future-Claude retrieval — not human reading.
+**AI-first rule:** Every note created or updated by this command MUST follow `references/ai-first-rules.md` - `## For future Claude` preamble, rich frontmatter (`type`, `date`, `tags`, `ai-first: true`, plus type-specific fields), recency markers per external claim, mandatory `[[wikilinks]]` for every person/project/concept referenced, sources preserved verbatim with URLs inline, and confidence levels where applicable. The vault is for future-Claude retrieval - not human reading.

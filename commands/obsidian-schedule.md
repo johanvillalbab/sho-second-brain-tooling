@@ -1,5 +1,5 @@
 ---
-description: Create or move a Google Calendar event — standalone, from a vault task, or via suggested-time slots — and propagate the link back to the task
+description: Create or move a Google Calendar event - standalone, from a vault task, or via suggested-time slots - and propagate the link back to the task
 category: vault
 exclude: [codex-cli, gemini-cli, opencode]
 triggers_en: ["schedule a meeting", "book a meeting", "put this on my calendar", "schedule this task", "find a time for"]
@@ -12,15 +12,15 @@ This command writes to Google Calendar. It requires the Google Calendar MCP tool
 
 Three modes, selected from the first argument shape:
 
-**Mode A — Standalone**: `/obsidian-schedule "<title>" <when> <duration>`
+**Mode A - Standalone**: `/obsidian-schedule "<title>" <when> <duration>`
 Example: `/obsidian-schedule "Sync with Acme" 2026-06-02 14:00 60min`
 Use when the meeting has no corresponding vault task yet.
 
-**Mode B — From task**: `/obsidian-schedule task:<path-or-fuzzy-title> <when> [duration]`
+**Mode B - From task**: `/obsidian-schedule task:<path-or-fuzzy-title> <when> [duration]`
 Example: `/obsidian-schedule task:wiki/tasks/2026-05-28-renew-aws-cert.md 2026-06-02 14:00 30min`
 Use when you want the calendar event tied to an existing task. `<path-or-fuzzy-title>` accepts either a direct path or a fuzzy task title that gets searched in `wiki/tasks/` and on kanban boards.
 
-**Mode C — Suggest time**: `/obsidian-schedule task:<path-or-fuzzy-title> suggest:<window> [duration]`
+**Mode C - Suggest time**: `/obsidian-schedule task:<path-or-fuzzy-title> suggest:<window> [duration]`
 Example: `/obsidian-schedule task:onboarding-call suggest:next-week 45min`
 Calls `mcp__claude_ai_Google_Calendar__suggest_time`, presents the proposed slots, and waits for the user to pick one before creating the event. Window accepts `today`, `tomorrow`, `week`, `next-week`, or `YYYY-MM-DD..YYYY-MM-DD`.
 
@@ -52,7 +52,7 @@ Steps:
    - Call `mcp__claude_ai_Google_Calendar__list_events` with `timeMin`/`timeMax` covering the proposed slot.
    - If any existing event overlaps, show the conflict to the user with title, time, and attendee count, and ask: proceed anyway, pick a different time, or abort. Default to "ask, do not double-book".
 
-7. Mode C only — suggest time:
+7. Mode C only - suggest time:
    - Resolve the window into `timeMin`/`timeMax` (ISO 8601).
    - Call `mcp__claude_ai_Google_Calendar__suggest_time` with the resolved window, the duration, and the attendee emails.
    - Present up to 5 proposed slots ranked by the MCP. Wait for user selection.
@@ -62,7 +62,7 @@ Steps:
    - Call `mcp__claude_ai_Google_Calendar__create_event` with the payload.
    - Capture the response: `id`, `htmlLink`, `start`, `end`, `hangoutLink` if any.
 
-9. Mode B and C only — propagate back to the task:
+9. Mode B and C only - propagate back to the task:
    - Use the Edit tool to merge into the task's frontmatter (never overwrite the file):
      ```yaml
      scheduled-at: "YYYY-MM-DDTHH:MM:SS±HH:MM"
@@ -73,7 +73,7 @@ Steps:
    - If the task already had a `calendar-event-id`, this is a reschedule. Call `mcp__claude_ai_Google_Calendar__update_event` instead of `create_event` (move the start/end), and update the same fields in place. Do not leave orphan events on the calendar.
    - Add one line at the end of the task body: `Scheduled: <htmlLink> at <when>`.
 
-10. If a person note's `email:` was used and the person note has no `last-interaction:` or it is older than this event, update `last-interaction:` to the scheduled date — same pattern as `/obsidian-person`.
+10. If a person note's `email:` was used and the person note has no `last-interaction:` or it is older than this event, update `last-interaction:` to the scheduled date - same pattern as `/obsidian-person`.
 
 11. Append one timestamped entry to `log.md`: `## [YYYY-MM-DDTHH:MM:SS±HH:MM] schedule | <mode> — "<title>" at <when> with <n> attendees → <event-id>`.
 
@@ -86,8 +86,8 @@ Steps:
     - The path of the task that was updated (Mode B/C)
     - A reminder if any person notes need an `email:` field filled in
 
-Never schedule an event that overlaps an existing one without explicit confirmation. Never create a duplicate event for a task that is already scheduled — reschedule instead. Never write an attendee whose email you had to guess.
+Never schedule an event that overlaps an existing one without explicit confirmation. Never create a duplicate event for a task that is already scheduled - reschedule instead. Never write an attendee whose email you had to guess.
 
 ---
 
-**AI-first rule:** Every note created or updated by this command MUST follow `references/ai-first-rules.md` — `## For future Claude` preamble, rich frontmatter (`type`, `date`, `tags`, `ai-first: true`, plus type-specific fields), recency markers per external claim, mandatory `[[wikilinks]]` for every person/project/concept referenced, sources preserved verbatim with URLs inline, and confidence levels where applicable. The vault is for future-Claude retrieval — not human reading.
+**AI-first rule:** Every note created or updated by this command MUST follow `references/ai-first-rules.md` - `## For future Claude` preamble, rich frontmatter (`type`, `date`, `tags`, `ai-first: true`, plus type-specific fields), recency markers per external claim, mandatory `[[wikilinks]]` for every person/project/concept referenced, sources preserved verbatim with URLs inline, and confidence levels where applicable. The vault is for future-Claude retrieval - not human reading.

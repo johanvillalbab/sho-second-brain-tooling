@@ -17,19 +17,19 @@ sample-vault/
 └── wiki/logs/2026-04-27 — Tide retention rebuild.md # type: devlog
 ```
 
-A real vault would also have `Companies/`, `Decisions/`, `Knowledge/`, `Research/`, `Boards/`, and `social-media/` folders. Those are referenced in wikilinks here but not included as files — a 7-file sample is enough to show the AI-first pattern without bloating the repo.
+A real vault would also have `Companies/`, `Decisions/`, `Knowledge/`, `Research/`, `Boards/`, and `social-media/` folders. Those are referenced in wikilinks here but not included as files - a 7-file sample is enough to show the AI-first pattern without bloating the repo.
 
 ## What to look for
 
 Each file demonstrates the 7 rules from the AI-first spec:
 
-1. **Self-contained context** — every note explains itself without relying on backlinks alone
-2. **`## For future Claude` preamble** — the 2-3 sentence summary right after the frontmatter
-3. **Rich frontmatter** — `type`, `date`, `tags`, `ai-first: true`, plus type-specific fields
-4. **Recency markers per claim** — external facts carry `(as of YYYY-MM, source.com)`
-5. **Sources verbatim** — URLs preserved inline, not paraphrased
-6. **Mandatory `[[wikilinks]]`** — every person, project, idea linked
-7. **Confidence levels** — `stated | high | medium | speculation` where applicable
+1. **Self-contained context** - every note explains itself without relying on backlinks alone
+2. **`## For future Claude` preamble** - the 2-3 sentence summary right after the frontmatter
+3. **Rich frontmatter** - `type`, `date`, `tags`, `ai-first: true`, plus type-specific fields
+4. **Recency markers per claim** - external facts carry `(as of YYYY-MM, source.com)`
+5. **Sources verbatim** - URLs preserved inline, not paraphrased
+6. **Mandatory `[[wikilinks]]`** - every person, project, idea linked
+7. **Confidence levels** - `stated | high | medium | speculation` where applicable
 
 ## Important note about the content
 

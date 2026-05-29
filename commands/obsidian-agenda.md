@@ -1,5 +1,5 @@
 ---
-description: Read Google Calendar and write an AI-first snapshot to the vault — today, week, next week, or a custom range
+description: Read Google Calendar and write an AI-first snapshot to the vault - today, week, next week, or a custom range
 category: vault
 exclude: [codex-cli, gemini-cli, opencode]
 triggers_en: ["review my agenda", "check my calendar", "what's on my schedule", "what's on the calendar", "agenda for this week", "agenda for next week"]
@@ -11,12 +11,12 @@ Use the obsidian-second-brain skill. Execute `/obsidian-agenda $ARGUMENTS`:
 The optional argument is the range. Accepted values:
 - `today` (default if no argument)
 - `tomorrow`
-- `week` — current ISO week, Monday to Sunday
-- `next-week` — next ISO week, Monday to Sunday
-- `YYYY-MM-DD` — a single day
-- `YYYY-MM-DD..YYYY-MM-DD` — a closed range
+- `week` - current ISO week, Monday to Sunday
+- `next-week` - next ISO week, Monday to Sunday
+- `YYYY-MM-DD` - a single day
+- `YYYY-MM-DD..YYYY-MM-DD` - a closed range
 
-This command requires the Google Calendar MCP tools (`mcp__claude_ai_Google_Calendar__list_events`, `mcp__claude_ai_Google_Calendar__list_calendars`). If they are not available, fail with a clear message ("This command requires the Google Calendar MCP — enable it in your Claude.ai integrations") and stop. Do not fall back to asking the user to paste the calendar.
+This command requires the Google Calendar MCP tools (`mcp__claude_ai_Google_Calendar__list_events`, `mcp__claude_ai_Google_Calendar__list_calendars`). If they are not available, fail with a clear message ("This command requires the Google Calendar MCP - enable it in your Claude.ai integrations") and stop. Do not fall back to asking the user to paste the calendar.
 
 Steps:
 
@@ -34,13 +34,13 @@ Steps:
 
 7. Cross-link attendees against the vault:
    - For each attendee, search for an existing person note. Default search path: `wiki/entities/` (wiki-style) or `People/` (Obsidian-style) per `_CLAUDE.md`.
-   - Match by full name first, then by the local-part of the email if the name is missing. Fuzzy match — handle missing diacritics and short forms.
+   - Match by full name first, then by the local-part of the email if the name is missing. Fuzzy match - handle missing diacritics and short forms.
    - If a person note is found, render the attendee as `[[Person Name]]`. If not found, render the plain name and append `(unknown person)` so future-Claude can decide whether to run `/obsidian-person` for them.
 
 8. Detect quality issues across the range:
    - **Conflicts**: events whose intervals overlap on the same calendar.
    - **Back-to-back stretches**: 3+ meetings with no gap, flag the start and length.
-   - **Focus gaps**: working-hours blocks (09:00–18:00 local by default unless overridden in `_CLAUDE.md`) with no meeting at all — call these out as available focus blocks.
+   - **Focus gaps**: working-hours blocks (09:00–18:00 local by default unless overridden in `_CLAUDE.md`) with no meeting at all - call these out as available focus blocks.
    - **Externally-organized events**: events whose organizer email domain does not match the user's own domain.
 
 9. Write the snapshot to the vault. Path (wiki-style default):
@@ -69,12 +69,12 @@ Steps:
       ```
     - `## For future Claude` preamble must state: this is a point-in-time snapshot of the user's calendar; the source of truth is Google Calendar, not this note; to refresh, re-run `/obsidian-agenda <range>`; the `fetched-at` timestamp is the recency anchor.
     - Body sections, in order:
-      - `## Range` — start, end, timezone.
-      - `## Summary` — one-line count per day, total events, focus blocks, conflicts.
-      - `## Events` — one subsection per day (`### YYYY-MM-DD — <Weekday>`), each event rendered as a bullet with start–end time, title, attendees as `[[wikilinks]]`, location, conference link verbatim, and `event-id: <id>` so future commands (`/obsidian-meeting`, `/obsidian-schedule update:`) can locate it.
-      - `## Conflicts` — only if conflicts were detected.
-      - `## Focus blocks` — only if focus blocks were detected.
-      - `## External organizers` — only if any.
+      - `## Range` - start, end, timezone.
+      - `## Summary` - one-line count per day, total events, focus blocks, conflicts.
+      - `## Events` - one subsection per day (`### YYYY-MM-DD — <Weekday>`), each event rendered as a bullet with start–end time, title, attendees as `[[wikilinks]]`, location, conference link verbatim, and `event-id: <id>` so future commands (`/obsidian-meeting`, `/obsidian-schedule update:`) can locate it.
+      - `## Conflicts` - only if conflicts were detected.
+      - `## Focus blocks` - only if focus blocks were detected.
+      - `## External organizers` - only if any.
     - Every person referenced uses `[[wikilinks]]`. Every URL (event htmlLink, conference link) is preserved verbatim.
 
 11. Append one timestamped entry to `log.md`: `## [YYYY-MM-DDTHH:MM:SS±HH:MM] agenda | <range-label> — <event-count> events, <conflict-count> conflicts`.
@@ -88,8 +88,8 @@ Steps:
     - Any externally-organized events
     - One-line note if any attendees were marked `(unknown person)` so the user can run `/obsidian-person` to fill them in
 
-Do not paraphrase event titles. Do not infer attendees that the calendar did not list. If the calendar is empty for the range, still write the snapshot (with `event-count: 0`) — future-Claude will use the absence of meetings as a signal too.
+Do not paraphrase event titles. Do not infer attendees that the calendar did not list. If the calendar is empty for the range, still write the snapshot (with `event-count: 0`) - future-Claude will use the absence of meetings as a signal too.
 
 ---
 
-**AI-first rule:** Every note created or updated by this command MUST follow `references/ai-first-rules.md` — `## For future Claude` preamble, rich frontmatter (`type`, `date`, `tags`, `ai-first: true`, plus type-specific fields), recency markers per external claim, mandatory `[[wikilinks]]` for every person/project/concept referenced, sources preserved verbatim with URLs inline, and confidence levels where applicable. The vault is for future-Claude retrieval — not human reading.
+**AI-first rule:** Every note created or updated by this command MUST follow `references/ai-first-rules.md` - `## For future Claude` preamble, rich frontmatter (`type`, `date`, `tags`, `ai-first: true`, plus type-specific fields), recency markers per external claim, mandatory `[[wikilinks]]` for every person/project/concept referenced, sources preserved verbatim with URLs inline, and confidence levels where applicable. The vault is for future-Claude retrieval - not human reading.
