@@ -388,6 +388,32 @@ The `area` and `depends-on` fields power the companion Task Graph plugin (a sepa
 
 ---
 
+### `/obsidian-proposal [client]`
+
+**Drafts a B2B commercial proposal (8-section structure) and keeps a `type: opportunity` deal tracker in sync.** Sets `client`, `contact`, `pax`, `price`, `valid-until`, `status` (draft to won/lost); links the proposal from the client project, the contact, and the sales board.
+
+### `/obsidian-panel [question]`
+
+**Convenes a panel of the vault's `Advisors/` on one decision.** Reads each advisor note, writes one independent verdict per advisor plus a synthesis, saves to `Advisors/Panels/YYYY-MM-DD - <slug>.md`, and propagates the decision to the affected entities and `Boards/Advisory Board`.
+
+### `/obsidian-1on1 [student]`
+
+**Captures a student 1:1 and mints `ALE-###` learnings.** Continues the id sequence in the learnings log, appends the new learnings there, and propagates implications to the course note, the student, and planning notes.
+
+### `/obsidian-event [event]`
+
+**Creates an event operations note with pre, day-of, and post checklists.** Sets `event-date`, `platform`, `registered`, `venue`; links the event playbook; spawns the day-of ops task on the right board.
+
+### `/obsidian-recurring [obligation + cadence]`
+
+**Tracks a recurring obligation** (payment, filing, ops). Sets `cadence`, `owner`, `blocker`, and computes `next-due`; adds a board card before the due date and advances `next-due` on each completion. Stops obligations from living only in chat.
+
+### `/obsidian-launch-block [course + topic]`
+
+**Creates a launch block: one mother-task (`type: task`) with an internal checklist** instead of scattering many loose tasks. Sets `course`, `block-number`, and `depends-on`, so each block is a node with dependency arrows in the Task Graph plugin.
+
+---
+
 ### `/obsidian-agenda [today | tomorrow | week | next-week | YYYY-MM-DD | YYYY-MM-DD..YYYY-MM-DD]`
 
 **Reads Google Calendar and writes an AI-first snapshot to the vault.**

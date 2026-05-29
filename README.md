@@ -268,6 +268,12 @@ Free transcript via youtube-transcript-api. Optional metadata + top comments via
 | `/obsidian-meeting` | Generates a vault meeting note from a Calendar event (last / next / by ID / fuzzy title). Pre-links attendees and any task that spawned the meeting. Claude Code only. |
 | `/obsidian-log` | Logs a work session, links it everywhere |
 | `/obsidian-task` | Adds task to the right board and a first-class `Tasks/` note with `area` and `depends-on` (feeds the companion [obsidian-task-graph](../obsidian-task-graph) plugin) |
+| `/obsidian-proposal` | Drafts a B2B commercial proposal and keeps the opportunity tracker in sync |
+| `/obsidian-panel` | Convenes an advisor panel on a decision and records each advisor's verdict |
+| `/obsidian-1on1` | Captures a student 1:1 and rolls its learnings into the learnings log |
+| `/obsidian-event` | Creates an event ops note with pre, day-of, and post checklists |
+| `/obsidian-recurring` | Tracks a recurring obligation with cadence and next due date |
+| `/obsidian-launch-block` | Creates a launch block (mother-task with an internal checklist) |
 | `/obsidian-person` | Creates or updates a person note |
 | `/obsidian-decide` | Logs decisions to the right project note |
 | `/obsidian-capture` | Zero-friction idea capture |

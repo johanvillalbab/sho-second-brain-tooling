@@ -236,6 +236,101 @@ related-projects: [...]
 ai-first: true
 ```
 
+### `type: proposal`
+Written by `/obsidian-proposal`. A commercial proposal for a client.
+```yaml
+date: YYYY-MM-DD
+updated: YYYY-MM-DD
+type: proposal
+status: draft                 # draft | sent | negotiating | won | lost
+client: "[[Companies/...]]"
+contact: "[[People/...]]"
+pax: ""                       # number or range
+price: ""
+currency: COP
+valid-until: YYYY-MM-DD
+sent-date: YYYY-MM-DD          # set when status -> sent
+related-projects: ["[[Projects/...]]", ...]
+tags: [proposal, b2b]
+ai-first: true
+```
+
+### `type: opportunity`
+Written by `/obsidian-proposal`. The deal tracker; one per opportunity, links its proposals.
+```yaml
+date: YYYY-MM-DD
+updated: YYYY-MM-DD
+type: opportunity
+company: "[[Companies/...]]"
+contact: "[[People/...]]"
+stage: lead                   # lead | scoping | proposed | negotiating | won | lost
+pax: ""
+price-range: ""
+currency: COP
+next-step: ""
+next-step-date: YYYY-MM-DD
+proposals: ["[[...]]", ...]
+related-people: ["[[People/...]]", ...]
+tags: [opportunity, b2b, pipeline]
+ai-first: true
+```
+
+### `type: advisor-panel`
+Written by `/obsidian-panel`. A panel of advisor verdicts on one decision.
+```yaml
+date: YYYY-MM-DD
+type: advisor-panel
+participants: ["[[Advisors/...]]", ...]
+subject: ""
+trigger: ""                   # verbatim quote or event that prompted the panel
+verdict: ""                   # one-line synthesized verdict
+tags: [advisors, panel, ...]
+ai-first: true
+```
+
+### `type: student-meeting`
+Written by `/obsidian-1on1`. A student 1:1 whose learnings roll up to the learnings log.
+```yaml
+date: YYYY-MM-DD
+type: student-meeting
+student: "[[People/...]]"
+course: "[[Projects/...]]"
+tags: [student, 1on1, ...]
+ai-first: true
+```
+
+### `type: event`
+Written by `/obsidian-event`. Operations note for an event (pre / day-of / post).
+```yaml
+date: YYYY-MM-DD
+type: event
+event-date: YYYY-MM-DD
+platform: ""                  # e.g. luma
+registered: 0
+venue: ""
+status: planning              # planning | confirmed | done
+tags: [event, ops]
+ai-first: true
+```
+
+### `type: recurring-task`
+Written by `/obsidian-recurring`. A recurring obligation with a cadence and next due date.
+```yaml
+date: YYYY-MM-DD
+type: recurring-task
+status: active                # active | paused | done-this-cycle
+cadence: ""                   # e.g. "monthly day 20" | "first days of month"
+owner: "[[People/...]]"
+blocker: ""                   # "[[...]]" if a person/vendor gates it
+next-due: YYYY-MM-DD
+amount: ""                    # optional, for payments/invoices
+tags: [recurring-task, admin]
+ai-first: true
+```
+
+Launch blocks created by `/obsidian-launch-block` use `type: task` (see above) with
+`course`, `block-number`, and `depends-on`, plus an internal checklist in the body.
+
 ---
 
 ## Preamble Templates by Type
