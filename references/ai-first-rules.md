@@ -299,6 +299,37 @@ tags: [student, 1on1, ...]
 ai-first: true
 ```
 
+### `type: advisor-session`
+Written by `/obsidian-advisor`. One recurring 1:1 with a single advisor.
+```yaml
+date: YYYY-MM-DD
+type: advisor-session
+advisor: "[[Advisors/...]]"
+domain: ""                    # mirrors the advisor's domain
+session: 0                    # nth session this sprint with this advisor
+agenda: ["", ...]             # points the advisor brought
+commitments: ["[[...]]", ...] # action items minted as task notes
+prev-session: "[[Advisors/Sessions/...]]"   # accountability backlink, empty if first
+related-projects: ["[[...]]", ...]
+tags: [advisor, session, 1on1]
+ai-first: true
+```
+
+### `type: advisory-review`
+Written by `/obsidian-advisory-review`. Weekly cross-advisor synthesis of the 1:1 sessions.
+```yaml
+date: YYYY-MM-DD
+type: advisory-review
+period-start: YYYY-MM-DD
+period-end: YYYY-MM-DD
+sessions-reviewed: ["[[Advisors/Sessions/...]]", ...]
+commitments-kept: 0
+commitments-dropped: 0
+top-priorities: ["", "", ""]
+tags: [advisors, review, weekly]
+ai-first: true
+```
+
 ### `type: event`
 Written by `/obsidian-event`. Operations note for an event (pre / day-of / post).
 ```yaml
