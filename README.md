@@ -34,7 +34,7 @@
   <br /><br />
   <em>Every source updates existing pages instead of just appending new ones. Contradictions reconcile automatically. Your vault compounds while you sleep.</em>
   <br /><br />
-  <em>36 commands &middot; auto-synthesis &middot; thinking tools that argue with you</em>
+  <em>38 commands &middot; auto-synthesis &middot; thinking tools that argue with you</em>
   <br /><br />
   <em>live research from X, the web, and YouTube &middot; 4 scheduled agents &middot; 4 role presets</em>
   <br /><br />
@@ -270,6 +270,8 @@ Free transcript via youtube-transcript-api. Optional metadata + top comments via
 | `/obsidian-task` | Adds task to the right board and a first-class `Tasks/` note with `area` and `depends-on` (feeds the companion [obsidian-task-graph](../obsidian-task-graph) plugin) |
 | `/obsidian-proposal` | Drafts a B2B commercial proposal and keeps the opportunity tracker in sync |
 | `/obsidian-panel` | Convenes an advisor panel on a decision and records each advisor's verdict |
+| `/obsidian-advisor` | Holds a live 1:1 advisor session with a Second-Brain-derived agenda and tracked commitments |
+| `/obsidian-advisory-review` | Weekly cross-advisor synthesis: advances, blockers, conflicts, next-week priorities |
 | `/obsidian-1on1` | Captures a student 1:1 and rolls its learnings into the learnings log |
 | `/obsidian-event` | Creates an event ops note with pre, day-of, and post checklists |
 | `/obsidian-recurring` | Tracks a recurring obligation with cadence and next due date |

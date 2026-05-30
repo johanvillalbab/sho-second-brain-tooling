@@ -102,7 +102,7 @@ See `references/vault-schema.md` for full structural details.
 ## Core Operating Principles
 
 ### AI-first vault rule (applies to every note)
-The vault is designed for **future-Claude** to read and reason over, not for human review. Every note Claude writes - across all 36 commands - must follow `references/ai-first-rules.md`:
+The vault is designed for **future-Claude** to read and reason over, not for human review. Every note Claude writes - across all 38 commands - must follow `references/ai-first-rules.md`:
 
 1. **Self-contained context** - each note explains itself; don't rely on backlinks alone
 2. **"For future Claude" preamble** - 2-3 sentence summary so Claude can decide relevance in 10 seconds
@@ -395,6 +395,14 @@ The `area` and `depends-on` fields power the companion Task Graph plugin (a sepa
 ### `/obsidian-panel [question]`
 
 **Convenes a panel of the vault's `Advisors/` on one decision.** Reads each advisor note, writes one independent verdict per advisor plus a synthesis, saves to `Advisors/Panels/YYYY-MM-DD - <slug>.md`, and propagates the decision to the affected entities and `Boards/Advisory Board`.
+
+### `/obsidian-advisor [advisor + topic]`
+
+**Holds a live 1:1 session with one advisor.** The advisor brings a 3 to 5 point agenda derived from the Second Brain (anchor projects, open tasks, recent progress), opens by checking last session's commitments, then coaches in character. Saves a `type: advisor-session` note to `Advisors/Sessions/`, mints a `type: task` per commitment, and backlinks to the prior session for accountability.
+
+### `/obsidian-advisory-review [week]`
+
+**Runs the weekly cross-advisor synthesis.** Reads the week's `advisor-session` notes, reports advances and blockers, surfaces where advisors contradict each other, tallies commitments kept vs dropped, and sets the top 3 priorities for next week. Saves a `type: advisory-review` note to `Advisors/Reviews/`.
 
 ### `/obsidian-1on1 [student]`
 
